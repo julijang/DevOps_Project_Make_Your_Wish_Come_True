@@ -15,8 +15,8 @@ pipeline {
           def currentMonth
 
           if (sMonth.isInteger() && sDay.isInteger()) {
-              int month = sMonth
-              int day = sDay
+              int month = sMonth.toInteger()
+              int day = sDay.toInteger()
           }
 
           switch(sMonth) {
