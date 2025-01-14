@@ -9,17 +9,20 @@ pipeline {
     stage ('Initialize') {
       steps {
         script {
-          def sMonth = "{$Month}"
-          def sDay = "{$Day}"
+          def sMonth = "${Month}"
+          def sDay = "${Day}"
 
           def currentMonth
 
+          int month
+          int day
+
           if (sMonth.isInteger() && sDay.isInteger()) {
-              int month = sMonth.toInteger()
-              int day = sDay.toInteger()
+              month = sMonth.toInteger()
+              day = sDay.toInteger()
           }
 
-          switch(sMonth) {
+          switch(month) {
             case 1:
               if(day < 15) {
                 currentMonth = "january"
@@ -108,7 +111,7 @@ pipeline {
                 currentMonth = "december"
               }
               break;
-            case 2:
+            case 12:
               if(day < 15) {
                 currentMonth = "december"
               }
@@ -117,7 +120,7 @@ pipeline {
               }
               break;
           }
-          echo "$currentMonth"
+          echo "${currentMonth}"
         }
       }
     }
