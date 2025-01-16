@@ -11,29 +11,42 @@ pipeline {
         script {
           def sMonth = "${Month}"
           def sDay = "${Day}"
-
-          def monthList = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"] as String[]
-
           def currentMonth
-
           int month
           int day
+          def monthList = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"] as String[]
 
-          if (sMonth.isInteger() && sDay.isInteger()) {
-              month = sMonth.toInteger()
-              day = sDay.toInteger()
 
-              if(day < 15) {
-                currentMonth = monthList[month - 1]
+          if (sMonth.isInteger() && sDay.isInteger()) { // checks if parameter input is an integer
+
+            // converts string inut to integers
+            month = sMonth.toInteger()
+            day = sDay.toInteger()
+
+            //checks for valid dates
+            if (month < 1 || month > 12) {
+              throw new IllegalArgumentException("Month must be between 1 and 12")
+            }
+            if (day < 1 || day > 31) {
+              throw new IllegalArgumentException("Day must be between 1 and 31")
+            }
+
+
+            // selects string output for inputted numerical date
+            if (day < 15) {
+              currentMonth = monthList[month - 1]
+            }
+            else {
+              if (month == 12) {
+                currentMonth = monthList[0]
               }
               else {
-                if (month = 12) {
-                  currentMonth = monthList[0]
-                }
-                else {
-                  currentMonth = monthList[month]
-                }
+                currentMonth = monthList[month]
               }
+            }
+          }
+          else {
+            throw new IllegalArgumentException("Month and Day must be integers")
           }
 
           // switch(month) {
