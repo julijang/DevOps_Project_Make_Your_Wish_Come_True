@@ -24,14 +24,14 @@ pipeline {
               day = sDay.toInteger()
 
               if(day < 15) {
-                currentMonth = monthList[month]
+                currentMonth = monthList[month - 1]
               }
               else {
                 if (month = 12) {
-                  currentMonth = monthList[1]
+                  currentMonth = monthList[0]
                 }
                 else {
-                  currentMonth = monthList[month + 1]
+                  currentMonth = monthList[month]
                 }
               }
           }
