@@ -12,6 +12,8 @@ pipeline {
           def sMonth = "${Month}"
           def sDay = "${Day}"
 
+          def monthList = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"] as String[]
+
           def currentMonth
 
           int month
@@ -20,9 +22,21 @@ pipeline {
           if (sMonth.isInteger() && sDay.isInteger()) {
               month = sMonth.toInteger()
               day = sDay.toInteger()
+
+              if(day < 15) {
+                currentMonth = monthList[month]
+              }
+              else {
+                if (month = 12) {
+                  currentMonth = monthList[1]
+                }
+                else {
+                  currentMonth = monthList[month + 1]
+                }
+              }
           }
 
-          switch(month) {
+          // switch(month) {
             case 1:
               if(day < 15) {
                 currentMonth = "january"
@@ -119,7 +133,7 @@ pipeline {
                 currentMonth = "january"
               }
               break;
-          }
+          // }
           echo "${currentMonth}"
         }
       }
