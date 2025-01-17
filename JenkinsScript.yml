@@ -8,27 +8,30 @@ pipeline {
     stage ('Initialize') {
       steps {
         script {
-          def sMonth = "${Month}"
-          def sDay = "${Day}"
+          def sMonth = params.Month
+          def sDay = params.Day
           def currentMonth
           int month
           int day
-          def monthList = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"] as String[]
+          def monthList = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
+          // Validate if parameters are integers
           if (sMonth.isInteger() && sDay.isInteger()) {
             month = sMonth.toInteger()
             day = sDay.toInteger()
 
+            // Validate month and day ranges
             if (month < 1 || month > 12) {
-              throw new IllegalArgumentException("Month must be between 1 and 12")
+              error("Month must be between 1 and 12")
             }
             if (day < 1 || day > 31) {
-              throw new IllegalArgumentException("Day must be between 1 and 31")
+              error("Day must be between 1 and 31")
             }
 
+            // Get the name of the month
             currentMonth = monthList[month - 1]
           } else {
-            throw new IllegalArgumentException("Month and Day must be integers")
+            error("Month and Day must be integers")
           }
 
           echo "Selected Month: ${currentMonth}"
@@ -53,9 +56,11 @@ pipeline {
             "December": ["breathe consciously 5 minutes a day"]
           ]
 
+          // Determine the selected month and retrieve tasks
           def selectedMonth = monthList[params.Month.toInteger() - 1]
           def tasks = tasksPerMonth[selectedMonth] ?: []
 
+          // Output tasks or a message if no tasks are found
           if (tasks.isEmpty()) {
             echo "No tasks defined for ${selectedMonth}."
           } else {
