@@ -8,7 +8,7 @@ pipeline {
     stage ('Initialize') {
       steps {
         script {
-          def sMonth = "${Month}"
+          def month = "${Month}"
           def sDay = "${Day}"
           def currentMonth
           int month
@@ -53,7 +53,7 @@ pipeline {
             "December": ["breathe consciously 5 minutes a day"]
           ]
 
-          def selectedMonth = monthList[params.Month.toInteger() - 1]
+          def selectedMonth = monthList["${Month}".toInteger() - 1]
           def tasks = tasksPerMonth[selectedMonth] ?: []
 
           if (tasks.isEmpty()) {
