@@ -15,6 +15,7 @@ pipeline {
           int day
           def monthList = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
+          /* Define the days for each month */
           def daysInMonth = [
             "January": 31,
             "February": 28,
@@ -30,6 +31,7 @@ pipeline {
             "December": 31
           ]
 
+          /* Validate if parameters are integers */
           if (sMonth.isInteger() && sDay.isInteger()) {
             month = sMonth.toInteger()
             day = sDay.toInteger()
@@ -42,12 +44,13 @@ pipeline {
               error("Day must be between 1 and ${daysInMonth[monthList[month - 1]]}")
             }
 
-            
+            /* Get the name of the month */
             currentMonth = monthList[month - 1]
           } else {
             error("Month and Day must be integers")
           }
 
+          /* Output the selected month */
           echo "Selected Month: ${currentMonth}"
         }
       }
@@ -70,11 +73,11 @@ pipeline {
             "December": ["Breathe consciously 5 minutes a day"]
           ]
 
-          
+          /* Get the name of the month */
           def selectedMonth = monthList[params.Month.toInteger() - 1]
           def tasks = tasksPerMonth[selectedMonth] ?: []
 
-          
+          /* Output tasks or a message if no tasks are found */
           if (tasks.isEmpty()) {
             echo "No tasks defined for ${selectedMonth}."
           } else {
