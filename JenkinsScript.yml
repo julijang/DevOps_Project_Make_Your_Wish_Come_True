@@ -1,1 +1,108 @@
-baby i need you <3
+pipeline {
+  agent any
+  parameters {
+    string(name: 'Month', description: 'Month (integer, no leading zeroes)')
+    string(name: 'Day', description: 'Day (integer, no leading zeroes)')
+  }
+  stages {
+    stage ('Initialize') {
+      steps {
+        script {
+          def sMonth = params.Month
+          def sDay = params.Day
+          def currentMonth
+          int month
+          int day
+          def monthList = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+
+          // Define the days for each month
+          def daysInMonth = [
+            "January": 31,
+            "February": 28,
+            "March": 31,
+            "April": 30,
+            "May": 31,
+            "June": 30,
+            "July": 31,
+            "August": 31,
+            "September": 30,
+            "October": 31,
+            "November": 30,
+            "December": 31
+          ]
+
+          // Validate if parameters are integers
+          if (sMonth.isInteger() && sDay.isInteger()) {
+            month = sMonth.toInteger()
+            day = sDay.toInteger()
+
+            // Validate month and day ranges
+            if (month < 1 || month > 12) {
+              error("Month must be between 1 and 12")
+            }
+
+            if (day < 1 || day > daysInMonth[monthList[month - 1]]) {
+              error("Day must be between 1 and ${daysInMonth[monthList[month - 1]]}")
+            }
+
+            // Get the name of the month
+            currentMonth = monthList[month - 1]
+          } else {
+            error("Month and Day must be integers")
+          }
+
+          echo "Selected Month: ${currentMonth}"
+        }
+      }
+    }
+    stage('Assign Tasks') {
+      steps {
+        script {
+          def tasksPerMonth = [
+            "January": ["Write journal"],
+            "February": ["Redecorate home"],
+            "March": ["Quit smoking", "Exercise", "Eat better", "Meditate", "Give yourself more you time"],
+            "April": ["Compliment others"],
+            "May": ["Do something you've never done"],
+            "June": ["Spend time with loved ones", "Get together for a weekend", "Go to country house", "Go out to dinner", "Do something kind for them"],
+            "July": ["Go to a concert and dance"],
+            "August": ["Sleep a night on beach", "Bring a blanket", "Bathe in the night", "Contemplate the immensity of the stars", "Let the first rays of the sun caress your face"],
+            "September": ["Explore new places", "Take a hike through mountains or costa brava trails around the world"],
+            "October": ["Study", "Read books", "Watch youtube", "Use online learning resources"],
+            "November": ["Learn a new instrument"],
+            "December": ["Breathe consciously 5 minutes a day"]
+          ]
+
+          // Determine the selected month and retrieve tasks
+          def selectedMonth = monthList[params.Month.toInteger() - 1]
+          def tasks = tasksPerMonth[selectedMonth] ?: []
+
+          // Output tasks or a message if no tasks are found
+          if (tasks.isEmpty()) {
+            echo "No tasks defined for ${selectedMonth}."
+          } else {
+            echo "Tasks for ${selectedMonth}:"
+            tasks.each { task ->
+              echo "- ${task}"
+            }
+          }
+        }
+      }
+    }
+    stage('BUILD') {
+      steps {
+        echo 'Development'
+      }
+    }
+    stage('Test') {
+      steps {
+        echo 'Testing'
+      }
+    }
+    stage('DEPLOY') {
+      steps {
+        echo 'Deployment'
+      }
+    }
+  }
+}
