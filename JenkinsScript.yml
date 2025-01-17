@@ -2,33 +2,33 @@ pipeline {
   agent any
   parameters {
     choice(name: 'MONTH', choices: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'], description: 'Select month (1-12)')
-    string(name: 'Day', description: 'Day (integer, no leading zeroes)')
+    string(name: 'DAY', description: 'Day (integer, no leading zeroes)')
   }
   stages {
     stage ('Initialize') {
       steps {
         script {
-          def month = "${Month}"
-          def sDay = "${Day}"
+          def sMonth = "${params.MONTH}"
+          def sDay = "${params.DAY}"
           def currentMonth
           int month
           int day
-          def monthList = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"] as String[]
+          def monthList = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
           if (sMonth.isInteger() && sDay.isInteger()) {
             month = sMonth.toInteger()
             day = sDay.toInteger()
 
             if (month < 1 || month > 12) {
-              throw new IllegalArgumentException("Month must be between 1 and 12")
+              error("Month must be between 1 and 12")
             }
             if (day < 1 || day > 31) {
-              throw new IllegalArgumentException("Day must be between 1 and 31")
+              error("Day must be between 1 and 31")
             }
 
             currentMonth = monthList[month - 1]
           } else {
-            throw new IllegalArgumentException("Month and Day must be integers")
+            error("Month and Day must be integers")
           }
 
           echo "Selected Month: ${currentMonth}"
@@ -53,7 +53,7 @@ pipeline {
             "December": ["breathe consciously 5 minutes a day"]
           ]
 
-          def selectedMonth = monthList["${Month}".toInteger() - 1]
+          def selectedMonth = monthList[params.MONTH.toInteger() - 1]
           def tasks = tasksPerMonth[selectedMonth] ?: []
 
           if (tasks.isEmpty()) {
