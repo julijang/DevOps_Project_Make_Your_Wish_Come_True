@@ -5,7 +5,7 @@ pipeline {
     string(name: 'Day', defaultValue: '1', description: 'Day (integer, no leading zeroes)')
   }
   environment {
-    MONTH_LIST = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    MONTH_LIST = '["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]'
   }
   stages {
     stage ('Initialize') {
