@@ -4,6 +4,9 @@ pipeline {
     string(name: 'Month', defaultValue: '1', description: 'Month (integer, no leading zeroes)')
     string(name: 'Day', defaultValue: '1', description: 'Day (integer, no leading zeroes)')
   }
+  environment {
+    MONTH_LIST = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+  }
   stages {
     stage ('Initialize') {
       steps {
@@ -13,7 +16,7 @@ pipeline {
           def currentMonth
           int month
           int day
-          def monthList = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+          def monthList = evaluate(env.MONTH_LIST)
 
           /* Define the days for each month */
           def daysInMonth = [
@@ -58,6 +61,7 @@ pipeline {
     stage('Assign Tasks') {
       steps {
         script {
+          def monthList = evaluate(env.MONTH_LIST)
           def tasksPerMonth = [
             "January": ["Write journal"],
             "February": ["Redecorate home"],
