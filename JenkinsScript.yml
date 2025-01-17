@@ -1,8 +1,7 @@
 pipeline {
   agent any
   parameters {
-    string(name: 'Month', description: 'Month (integer, no leading zeroes)')
-
+    choice(name: 'MONTH', choices: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'], description: 'Select month (1-12)')
     string(name: 'Day', description: 'Day (integer, no leading zeroes)')
   }
   stages {
@@ -16,13 +15,10 @@ pipeline {
           int day
           def monthList = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"] as String[]
 
-          if (sMonth.isInteger() && sDay.isInteger()) { // checks if parameter input is an integer
-
-            // converts string inut to integers
+          if (sMonth.isInteger() && sDay.isInteger()) {
             month = sMonth.toInteger()
             day = sDay.toInteger()
 
-            //checks for valid dates
             if (month < 1 || month > 12) {
               throw new IllegalArgumentException("Month must be between 1 and 12")
             }
@@ -30,31 +26,50 @@ pipeline {
               throw new IllegalArgumentException("Day must be between 1 and 31")
             }
 
-
-            // selects string output for inputted numerical date
-            if (day < 15) {
-              currentMonth = monthList[month - 1]
-            }
-            else {
-              if (month == 12) {
-                currentMonth = monthList[0]
-              }
-              else {
-                currentMonth = monthList[month]
-              }
-            }
-          }
-          else {
+            currentMonth = monthList[month - 1]
+          } else {
             throw new IllegalArgumentException("Month and Day must be integers")
           }
 
-          echo "${currentMonth}"
+          echo "Selected Month: ${currentMonth}"
+        }
+      }
+    }
+    stage('Assign Tasks') {
+      steps {
+        script {
+          def tasksPerMonth = [
+            "January": ["write journal"],
+            "February": ["redecorate home"],
+            "March": ["quit smoking", "exercise", "eat better", "meditate", "give yourself more you time"],
+            "April": ["compliment others"],
+            "May": ["do something you've never done"],
+            "June": ["spend time with loved ones", "get together for a weekend", "go to country house", "go out to dinner", "do something kind for them"],
+            "July": ["go to a concert and dance"],
+            "August": ["Sleep a night on beach", "bring blanket", "bathe in the night", "contemplate the immensity of the stars", "let the first rays of the sun caress your face"],
+            "September": ["explore new places", "take a hike through mountains or costa brava trails around the world"],
+            "October": ["study", "read books", "watch youtube", "use online learning resources"],
+            "November": ["learn a new instrument"],
+            "December": ["breathe consciously 5 minutes a day"]
+          ]
+
+          def selectedMonth = monthList[params.Month.toInteger() - 1]
+          def tasks = tasksPerMonth[selectedMonth] ?: []
+
+          if (tasks.isEmpty()) {
+            echo "No tasks defined for ${selectedMonth}."
+          } else {
+            echo "Tasks for ${selectedMonth}:"
+            tasks.each { task ->
+              echo "- ${task}"
+            }
+          }
         }
       }
     }
     stage('BUILD') {
       steps {
-        echo 'Developpement'
+        echo 'Development'
       }
     }
     stage('Test') {
@@ -64,7 +79,7 @@ pipeline {
     }
     stage('DEPLOY') {
       steps {
-        echo 'Mise en Production'
+        echo 'Deployment'
       }
     }
   }
