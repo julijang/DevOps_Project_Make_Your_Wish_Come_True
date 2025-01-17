@@ -1,8 +1,8 @@
 pipeline {
   agent any
   parameters {
-    string(name: 'Month', description: 'Month (integer, no leading zeroes)')
-    string(name: 'Day', description: 'Day (integer, no leading zeroes)')
+    string(name: 'Month', defaultValue: '1', description: 'Month (integer, no leading zeroes)')
+    string(name: 'Day', defaultValue: '1', description: 'Day (integer, no leading zeroes)')
   }
   stages {
     stage ('Initialize') {
